@@ -26,6 +26,7 @@ npm run dev
 | `TURSO_AUTH_TOKEN` | for history | Turso auth token (never commit) |
 | `CRON_SECRET` | for cron | Protects `/api/cron/collect-price` |
 | `NEXT_PUBLIC_SITE_URL` | optional | Canonical site URL (default `https://cekemas.com`) |
+| `DEMO_HISTORY` | optional | Set `1` to preview the 30-day chart with static sample data (shows “Simulasi” badge). Turn off for production. |
 
 If Turso env vars are missing, live prices still work; the history chart is hidden.
 

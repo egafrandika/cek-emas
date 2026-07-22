@@ -12,6 +12,7 @@ import { formatUpdatedAt } from "@/lib/format";
 import {
   getHistoryPayload,
   HISTORY_SOURCE,
+  pickDefaultRange,
 } from "@/lib/history";
 import {
   buildCompareRows,
@@ -23,8 +24,23 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 export const revalidate = 600;
 
 export default async function HomePage() {
-  const [{ bySource, primary, updatedAt, anyStale }, history] =
-    await Promise.all([fetchAllSources(), getHistoryPayload(HISTORY_SOURCE)]);
+  const [{ bySource, primary, updatedAt, anyStale }, historySeed] =
+    await Promise.all([
+      fetchAllSources(),
+      getHistoryPayload({ source: HISTORY_SOURCE, range: "7d" }),
+    ]);
+
+  const defaultRange = historySeed.demo
+    ? "30d"
+    : pickDefaultRange(historySeed.count || 0);
+
+  const history =
+    defaultRange === historySeed.range
+      ? historySeed
+      : await getHistoryPayload({
+          source: HISTORY_SOURCE,
+          range: defaultRange,
+        });
 
   const rows = buildCompareRows(bySource);
   const primarySource =
@@ -97,11 +113,8 @@ export default async function HomePage() {
           <>
             <CompareTable rows={rows} />
             <PriceHistoryChart
-              points={history.points}
-              count={history.count}
-              required={history.required}
-              ready={history.ready}
-              configured={history.configured}
+              initialHistory={history}
+              sourceId={HISTORY_SOURCE}
               sourceName={historySourceName}
             />
           </>

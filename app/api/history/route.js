@@ -4,6 +4,7 @@ import {
   HISTORY_READY_DAYS,
   HISTORY_SOURCE,
 } from "@/lib/history";
+import { normalizeRange } from "@/lib/ranges";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -11,16 +12,14 @@ export const runtime = "nodejs";
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const source = searchParams.get("source") || HISTORY_SOURCE;
-  const days = Math.min(
-    90,
-    Math.max(1, Number(searchParams.get("days")) || HISTORY_READY_DAYS)
-  );
+  const range = normalizeRange(searchParams.get("range") || "30d");
+  const year = searchParams.get("year");
 
   try {
-    const payload = await getHistoryPayload(source, days);
+    const payload = await getHistoryPayload({ source, range, year });
     return NextResponse.json(payload, {
       headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
       },
     });
   } catch (error) {
@@ -28,7 +27,11 @@ export async function GET(request) {
       {
         configured: false,
         source,
+        range,
+        year: null,
+        years: [],
         count: 0,
+        rangeCount: 0,
         ready: false,
         required: HISTORY_READY_DAYS,
         points: [],
