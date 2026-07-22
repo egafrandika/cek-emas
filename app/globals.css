@@ -3,25 +3,71 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-paper: #f7f4ef;
+  --color-ink: #1a1c1e;
+  --color-muted: #5c6166;
+  --color-accent: #b0892f;
+  --color-accent-soft: #e8d9b0;
+  --color-surface: #fffcf7;
+  --color-line: rgba(26, 28, 30, 0.12);
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  font-family: var(--font-jakarta), system-ui, sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Warm paper grain + soft gold atmosphere (no flat fill) */
+.bg-atmosphere {
+  background-color: var(--color-paper);
+  background-image:
+    radial-gradient(
+      ellipse 90% 60% at 70% 10%,
+      rgba(176, 137, 47, 0.18),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 15% 80%,
+      rgba(176, 137, 47, 0.08),
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(26, 28, 30, 0.015) 0,
+      rgba(26, 28, 30, 0.015) 1px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: 0 1px 0 rgba(26, 28, 30, 0.04), 0 8px 24px rgba(26, 28, 30, 0.06);
+}
+
+.prose-cek p {
+  margin-bottom: 1rem;
+  line-height: 1.75;
+  color: var(--color-ink);
+}
+
+.ad-slot {
+  border: 1px dashed var(--color-line);
+  background: rgba(176, 137, 47, 0.04);
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px;
 }

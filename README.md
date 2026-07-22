@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CekEmas
 
-## Getting Started
+Indonesian gold price utility site — compare live prices, calculate gram ↔ rupiah, track a 30-day chart (after enough daily samples), and read short educational articles.
 
-First, run the development server:
+## Stack
+
+- Next.js 14 (App Router, JavaScript)
+- Tailwind CSS
+- Logam Mulia public API (Cloudflare Workers)
+- Turso (libSQL / SQLite) for daily price history
+
+## Setup
 
 ```bash
+npm install
+cp .env.example .env.local
+# fill TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, CRON_SECRET
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment variables
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `TURSO_DATABASE_URL` | for history | Turso DB URL (`libsql://...`) |
+| `TURSO_AUTH_TOKEN` | for history | Turso auth token (never commit) |
+| `CRON_SECRET` | for cron | Protects `/api/cron/collect-price` |
+| `NEXT_PUBLIC_SITE_URL` | optional | Canonical site URL (default `https://cekemas.com`) |
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+If Turso env vars are missing, live prices still work; the history chart is hidden.
 
-## Learn More
+**Security:** if a Turso token was ever shared in chat or committed, revoke and regenerate it in the Turso dashboard.
 
-To learn more about Next.js, take a look at the following resources:
+## Daily price collect
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Cron (Vercel) runs daily at `0 2 * * *` (02:00 UTC ≈ 09:00 WIB) against `/api/cron/collect-price`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Manual collect (local or production):
 
-## Deploy on Vercel
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  http://localhost:3000/api/cron/collect-price
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+On Vercel, set the same `CRON_SECRET` in project env so cron requests are authorized.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The chart on the home page shows a progress state until **30 distinct Jakarta dates** are stored for Logam Mulia 1g, then renders the 30-day line chart.
+
+## Scripts
+
+- `npm run dev` — local development
+- `npm run build` — production build
+- `npm start` — serve production build
+
+## Notes
+
+- Live prices: `/api/prices` and helpers in `lib/prices.js`
+- History: `/api/history` and collect job in `app/api/cron/collect-price`
+- Ad slots are placeholders until AdSense is connected
+- Copy is Indonesian-first
