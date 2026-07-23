@@ -82,38 +82,57 @@ export default async function SumberPage({ params }) {
         <section className="mt-10">
           <h2 className="font-display text-2xl text-ink">Daftar gramasi</h2>
           <div className="panel mt-4 overflow-hidden rounded-xl">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-line bg-paper/60 text-xs uppercase tracking-wide text-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Tipe</th>
-                  <th className="px-4 py-3 font-medium">Gram</th>
-                  <th className="px-4 py-3 font-medium">Jual</th>
-                  <th className="px-4 py-3 font-medium">Buyback</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {goldItems.length === 0 && (
+            <div className="-mx-0 overflow-x-auto overscroll-x-contain touch-pan-x">
+              <table className="w-full min-w-[36rem] text-left text-sm">
+                <thead className="border-b border-line bg-paper/60 text-xs uppercase tracking-wide text-muted">
                   <tr>
-                    <td colSpan={4} className="px-4 py-6 text-muted">
-                      Data tidak tersedia saat ini.
-                    </td>
+                    <th className="whitespace-nowrap px-4 py-3 font-medium">
+                      Tipe
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 font-medium">
+                      Gram
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 font-medium">
+                      Jual
+                    </th>
+                    <th className="whitespace-nowrap px-4 py-3 font-medium">
+                      Buyback
+                    </th>
                   </tr>
-                )}
-                {goldItems.map((item, idx) => (
-                  <tr key={`${item.materialType}-${item.weight}-${idx}`}>
-                    <td className="px-4 py-3 text-ink">
-                      {item.materialType || "Emas"}
-                    </td>
-                    <td className="px-4 py-3">{item.weight} g</td>
-                    <td className="px-4 py-3 font-medium">
-                      {formatIDR(item.sellPrice)}
-                    </td>
-                    <td className="px-4 py-3">{formatIDR(item.buybackPrice)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {goldItems.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-6 text-muted">
+                        Data tidak tersedia saat ini.
+                      </td>
+                    </tr>
+                  )}
+                  {goldItems.map((item, idx) => (
+                    <tr key={`${item.materialType}-${item.weight}-${idx}`}>
+                      <td className="max-w-[14rem] px-4 py-3 text-ink sm:max-w-none">
+                        <span className="line-clamp-2 sm:line-clamp-none">
+                          {item.materialType || "Emas"}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3">
+                        {item.weight} g
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3 font-medium">
+                        {formatIDR(item.sellPrice)}
+                      </td>
+                      <td className="whitespace-nowrap px-4 py-3">
+                        {formatIDR(item.buybackPrice)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+          <p className="mt-2 text-xs text-muted sm:hidden">
+            Geser tabel ke samping untuk melihat semua kolom.
+          </p>
           <p className="mt-3 text-xs text-muted">
             Diperbarui{" "}
             <time dateTime={data.timestamp || undefined}>
