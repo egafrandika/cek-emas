@@ -47,7 +47,6 @@ function niceTicks(min, max, count = 4) {
 function rangeTitle(range, year) {
   if (range === "7d") return "Grafik harga 7 hari";
   if (range === "30d") return "Grafik harga 30 hari";
-  if (range === "1m") return "Grafik harga 1 bulan";
   if (range === "year") return `Grafik harga tahun ${year || ""}`.trim();
   return "Grafik harga emas";
 }
@@ -77,13 +76,32 @@ export default function PriceHistoryChart({
     async function load() {
       setLoading(true);
       setActiveIndex(null);
+
+      // Only wipe the series when the visible payload belongs to another filter.
+      setPayload((prev) => {
+        const sameRange =
+          prev?.range === range &&
+          (range !== "year" || String(prev?.year || "") === String(year || ""));
+        if (sameRange) return prev;
+        return {
+          ...(prev || {}),
+          range,
+          year: range === "year" ? year : null,
+          ready: false,
+          points: [],
+          rangeCount: 0,
+        };
+      });
+
       try {
         const params = new URLSearchParams({
           source: sourceId,
           range,
         });
         if (range === "year" && year) params.set("year", year);
-        const res = await fetch(`/api/history?${params.toString()}`);
+        const res = await fetch(`/api/history?${params.toString()}`, {
+          cache: "no-store",
+        });
         const data = await res.json();
         if (!cancelled) setPayload(data);
       } catch {
@@ -236,13 +254,17 @@ export default function PriceHistoryChart({
                   type="button"
                   role="tab"
                   aria-selected={activeRange}
+                  disabled={!isUnlocked}
                   title={
                     isUnlocked
                       ? item.label
                       : `Terkunci — butuh ${item.required} hari data`
                   }
-                  onClick={() => setRange(item.id)}
-                  className={`rounded-md px-3 py-1.5 text-sm transition ${
+                  onClick={() => {
+                    if (!isUnlocked || item.id === range) return;
+                    setRange(item.id);
+                  }}
+                  className={`rounded-md px-3 py-1.5 text-sm transition disabled:cursor-not-allowed ${
                     activeRange
                       ? "bg-ink text-paper"
                       : isUnlocked
@@ -276,11 +298,11 @@ export default function PriceHistoryChart({
       </div>
 
       <div className="panel rounded-xl p-5 sm:p-6">
-        {loading && (
-          <p className="mb-3 text-xs text-muted">Memuat grafik…</p>
-        )}
-
-        {!ready ? (
+        {loading && !ready ? (
+          <div className="flex min-h-[220px] items-center justify-center text-sm text-muted">
+            Memuat grafik…
+          </div>
+        ) : !ready ? (
           <div>
             <p className="text-sm leading-relaxed text-ink">
               {range === "7d"
@@ -309,6 +331,7 @@ export default function PriceHistoryChart({
               onMouseLeave={() => setActiveIndex(null)}
             >
               <svg
+                key={`${range}-${rangeCount}-${points[0]?.date || ""}-${points[points.length - 1]?.date || ""}`}
                 ref={svgRef}
                 viewBox={`0 0 ${chart.width} ${chart.height}`}
                 className="h-auto w-full animate-priceIn touch-pan-y"

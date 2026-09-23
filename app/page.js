@@ -1,6 +1,5 @@
 import PriceHero from "@/components/PriceHero";
 import CompareTable from "@/components/CompareTable";
-import HomeTabs from "@/components/HomeTabs";
 import PriceHistoryChart from "@/components/PriceHistoryChart";
 import FaqSection, { getFaqItems } from "@/components/FaqSection";
 import ArticleTeasers from "@/components/ArticleTeasers";
@@ -47,11 +46,6 @@ export default async function HomePage() {
     bySource[DEFAULT_SOURCE]?.oneGram != null
       ? DEFAULT_SOURCE
       : rows.find((r) => r.success)?.source.id || DEFAULT_SOURCE;
-
-  const priceMap = {};
-  for (const row of rows) {
-    if (row.sellPrice != null) priceMap[row.source.id] = row.sellPrice;
-  }
 
   const primaryName =
     rows.find((r) => r.source.id === primarySource)?.source.name || "Logam Mulia";
@@ -109,16 +103,12 @@ export default async function HomePage() {
       <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
         <AdSlot label="Iklan konten" className="mb-10" />
 
-        <HomeTabs priceMap={priceMap} defaultSourceId={primarySource}>
-          <>
-            <CompareTable rows={rows} />
-            <PriceHistoryChart
-              initialHistory={history}
-              sourceId={HISTORY_SOURCE}
-              sourceName={historySourceName}
-            />
-          </>
-        </HomeTabs>
+        <CompareTable rows={rows} />
+        <PriceHistoryChart
+          initialHistory={history}
+          sourceId={HISTORY_SOURCE}
+          sourceName={historySourceName}
+        />
 
         <FaqSection />
         <ArticleTeasers articles={articles} />

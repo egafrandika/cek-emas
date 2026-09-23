@@ -19,7 +19,8 @@ export async function GET(request) {
     const payload = await getHistoryPayload({ source, range, year });
     return NextResponse.json(payload, {
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        // Avoid serving a previous range body when the filter changes.
+        "Cache-Control": "private, no-cache, no-store, max-age=0, must-revalidate",
       },
     });
   } catch (error) {

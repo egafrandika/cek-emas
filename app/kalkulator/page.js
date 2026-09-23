@@ -3,7 +3,7 @@ import GoldCalculator from "@/components/GoldCalculator";
 import AdSlot from "@/components/AdSlot";
 import JsonLd from "@/components/JsonLd";
 import { buildCompareRows, fetchAllSources } from "@/lib/prices";
-import { DEFAULT_SOURCE } from "@/lib/sources";
+import { DEFAULT_SOURCE, getSourceBySlug } from "@/lib/sources";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const revalidate = 600;
@@ -21,13 +21,19 @@ export const metadata = {
   },
 };
 
-export default async function KalkulatorPage() {
+export default async function KalkulatorPage({ searchParams }) {
   const { bySource } = await fetchAllSources();
   const rows = buildCompareRows(bySource);
   const priceMap = {};
   for (const row of rows) {
     if (row.sellPrice != null) priceMap[row.source.id] = row.sellPrice;
   }
+
+  const requested = getSourceBySlug(searchParams?.sumber || "");
+  const defaultSourceId =
+    requested && priceMap[requested.id] != null
+      ? requested.id
+      : DEFAULT_SOURCE;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -45,31 +51,34 @@ export default async function KalkulatorPage() {
     <div className="bg-atmosphere">
       <JsonLd data={jsonLd} />
       <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
-        <p className="font-display text-4xl text-ink sm:text-5xl">{SITE_NAME}</p>
-        <h1 className="mt-3 font-display text-3xl text-ink sm:text-4xl">
+        <p className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
+          {SITE_NAME}
+        </p>
+        <h1 className="mt-4 font-display text-3xl text-ink sm:text-4xl">
           Kalkulator harga emas
         </h1>
-        <p className="mt-3 max-w-xl text-muted">
-          Masukkan uang atau gram, pilih sumber acuan, dan dapatkan estimasi
-          cepat berdasarkan harga 1 gram hari ini.
+        <p className="mt-3 max-w-2xl text-base text-muted sm:text-lg">
+          Pilih sumber acuan, masukkan uang atau gram, dan dapatkan estimasi
+          berdasarkan harga 1 gram hari ini.
         </p>
 
-        <AdSlot label="Iklan konten" className="my-8" />
-
-        <div className="max-w-xl">
+        <div className="mt-10">
           <GoldCalculator
+            key={defaultSourceId}
             priceMap={priceMap}
-            defaultSourceId={DEFAULT_SOURCE}
+            defaultSourceId={defaultSourceId}
           />
         </div>
 
-        <p className="mt-8 text-sm text-muted">
+        <p className="mt-6 text-sm text-muted">
           Butuh perbandingan lengkap?{" "}
           <Link href="/" className="text-accent hover:underline">
             Lihat harga emas hari ini
           </Link>
           .
         </p>
+
+        <AdSlot label="Iklan konten" className="mt-10" />
       </div>
     </div>
   );

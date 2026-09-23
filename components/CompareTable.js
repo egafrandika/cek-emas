@@ -10,7 +10,7 @@ export default function CompareTable({ rows }) {
             Bandingkan harga 1 gram
           </h2>
           <p className="mt-1 text-sm text-muted">
-            Harga jual dan buyback dari beberapa sumber.
+            Ketuk sumber untuk lihat detail harga jual dan buyback.
           </p>
         </div>
       </div>
@@ -20,7 +20,8 @@ export default function CompareTable({ rows }) {
           <div className="col-span-3">Sumber</div>
           <div className="col-span-3">Jual</div>
           <div className="col-span-3">Buyback</div>
-          <div className="col-span-3">Diperbarui</div>
+          <div className="col-span-2">Diperbarui</div>
+          <div className="col-span-1 text-right">Detail</div>
         </div>
 
         <ul className="divide-y divide-line">
@@ -28,10 +29,12 @@ export default function CompareTable({ rows }) {
             <li key={row.source.id}>
               <Link
                 href={`/harga/${row.source.slug}`}
-                className="grid grid-cols-1 gap-2 px-4 py-4 transition hover:bg-accent-soft/25 sm:grid-cols-12 sm:items-center"
+                className="group grid grid-cols-1 gap-2 px-4 py-4 transition hover:bg-accent-soft/25 focus-visible:bg-accent-soft/25 focus-visible:outline-none sm:grid-cols-12 sm:items-center"
               >
                 <div className="sm:col-span-3">
-                  <p className="font-medium text-ink">{row.source.name}</p>
+                  <p className="font-medium text-ink transition group-hover:text-accent">
+                    {row.source.name}
+                  </p>
                   <p className="text-xs text-muted">
                     {row.materialType || "Emas 1 gram"}
                   </p>
@@ -48,12 +51,23 @@ export default function CompareTable({ rows }) {
                     {formatIDR(row.buybackPrice)}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm text-muted sm:col-span-3 sm:block">
+                <div className="flex justify-between text-sm text-muted sm:col-span-2 sm:block">
                   <span className="text-xs sm:hidden">Update</span>
                   <time dateTime={row.timestamp || undefined}>
                     {formatUpdatedAt(row.timestamp)}
                     {row.stale ? " · cache" : ""}
                   </time>
+                </div>
+                <div className="mt-1 flex items-center justify-between sm:col-span-1 sm:mt-0 sm:justify-end">
+                  <span className="text-xs font-medium text-accent sm:hidden">
+                    Lihat detail
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="text-base leading-none text-muted transition group-hover:translate-x-0.5 group-hover:text-accent"
+                  >
+                    →
+                  </span>
                 </div>
               </Link>
             </li>

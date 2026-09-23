@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatIDR, formatUpdatedAt } from "@/lib/format";
 import { SITE_NAME } from "@/lib/site";
 
@@ -55,12 +56,12 @@ export default function PriceHero({
           >
             Lihat perbandingan
           </a>
-          <a
-            href="#kalkulator"
+          <Link
+            href="/kalkulator"
             className="inline-flex items-center rounded-md px-5 py-2.5 text-sm font-medium text-ink ring-1 ring-line transition hover:bg-accent-soft/40"
           >
             Buka kalkulator
-          </a>
+          </Link>
         </div>
 
         <p className="mt-8 max-w-2xl text-xs leading-relaxed text-muted">

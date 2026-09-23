@@ -13,7 +13,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Bagaimana cara memakai kalkulator emas?",
-    a: "Pilih sumber acuan, lalu masukkan jumlah uang untuk memperkirakan gram, atau masukkan gram untuk memperkirakan nilai rupiah berdasarkan harga 1 gram.",
+    a: "Buka halaman Kalkulator, pilih sumber acuan, lalu masukkan jumlah uang untuk memperkirakan gram, atau masukkan gram untuk memperkirakan nilai rupiah berdasarkan harga 1 gram.",
   },
 ];
 

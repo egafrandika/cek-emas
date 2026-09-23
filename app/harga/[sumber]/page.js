@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PriceHero from "@/components/PriceHero";
-import GoldCalculator from "@/components/GoldCalculator";
 import AdSlot from "@/components/AdSlot";
 import JsonLd from "@/components/JsonLd";
 import { formatIDR, formatUpdatedAt } from "@/lib/format";
@@ -39,8 +38,6 @@ export default async function SumberPage({ params }) {
   const data = await fetchSourcePrices(source.id);
   const oneGram = data.oneGram || pickOneGramPrice(data.items);
   const goldItems = (data.items || []).filter((i) => i.material === "gold");
-
-  const priceMap = { [source.id]: oneGram?.sellPrice ?? null };
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -141,11 +138,23 @@ export default async function SumberPage({ params }) {
           </p>
         </section>
 
-        <section className="mt-12" id="kalkulator">
-          <GoldCalculator
-            priceMap={priceMap}
-            defaultSourceId={source.id}
-          />
+        <section className="mt-12" aria-labelledby="kalkulator-cta-heading">
+          <h2
+            id="kalkulator-cta-heading"
+            className="font-display text-xl text-ink"
+          >
+            Hitung estimasi
+          </h2>
+          <p className="mt-2 max-w-xl text-sm text-muted">
+            Ubah rupiah ke gram (atau sebaliknya) memakai harga 1 gram{" "}
+            {source.name} hari ini.
+          </p>
+          <Link
+            href={`/kalkulator?sumber=${source.slug}`}
+            className="mt-4 inline-flex items-center rounded-md bg-ink px-5 py-2.5 text-sm font-medium text-paper transition hover:bg-ink/90"
+          >
+            Buka kalkulator {source.name}
+          </Link>
         </section>
 
         <section className="mt-12">
