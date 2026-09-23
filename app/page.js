@@ -98,6 +98,7 @@ export default async function HomePage() {
         sourceName={primaryName}
         updatedAt={updatedAt}
         stale={anyStale}
+        compareHref="#bandingkan"
       />
 
       <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">

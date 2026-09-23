@@ -58,6 +58,8 @@ export default async function SumberPage({ params }) {
         sourceName={source.name}
         updatedAt={data.timestamp}
         stale={data.stale}
+        compareHref="/#bandingkan"
+        calculatorHref={`/kalkulator?sumber=${source.slug}`}
       />
 
       <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
@@ -76,7 +78,7 @@ export default async function SumberPage({ params }) {
           sebelum bertransaksi.
         </p>
 
-        <section className="mt-10">
+        <section className="mt-10 scroll-mt-24" id="gramasi">
           <h2 className="font-display text-2xl text-ink">Daftar gramasi</h2>
           <div className="panel mt-4 overflow-hidden rounded-xl">
             <div className="-mx-0 overflow-x-auto overscroll-x-contain touch-pan-x">

@@ -9,6 +9,8 @@ export default function PriceHero({
   sourceName,
   updatedAt,
   stale = false,
+  compareHref = "/#bandingkan",
+  calculatorHref = "/kalkulator",
 }) {
   return (
     <section className="relative overflow-hidden">
@@ -50,14 +52,14 @@ export default function PriceHero({
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            href="#bandingkan"
+          <Link
+            href={compareHref}
             className="inline-flex items-center rounded-md bg-ink px-5 py-2.5 text-sm font-medium text-paper transition hover:bg-ink/90"
           >
             Lihat perbandingan
-          </a>
+          </Link>
           <Link
-            href="/kalkulator"
+            href={calculatorHref}
             className="inline-flex items-center rounded-md px-5 py-2.5 text-sm font-medium text-ink ring-1 ring-line transition hover:bg-accent-soft/40"
           >
             Buka kalkulator
